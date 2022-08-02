@@ -165,16 +165,12 @@ class SystemService(KartonServiceBase):
                 self.backend.increment_metrics(KartonMetrics.TASK_ASSIGNED, identity)
 
     def loop(self) -> None:
-        self.log.info("Manager {} started".format(self.identity))
+        self.log.info(f"Manager {self.identity} started")
 
         while not self.shutdown:
-            # Order does matter! task dispatching must be before
-            # karton.operations to avoid races Timeout must be shorter than GC_INTERVAL,
-            # but not too long allowing graceful shutdown
-            data = self.backend.consume_queues(
+            if data := self.backend.consume_queues(
                 ["karton.tasks", "karton.operations"], timeout=5
-            )
-            if data:
+            ):
                 queue, body = data
                 if not isinstance(body, str):
                     body = body.decode("utf-8")

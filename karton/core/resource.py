@@ -409,9 +409,7 @@ class RemoteResource(ResourceBase):
 
         :return: Content bytes
         """
-        if self._content is None:
-            return self.download()
-        return self._content
+        return self.download() if self._content is None else self._content
 
     def unload(self) -> None:
         """

@@ -32,7 +32,7 @@ class Config(object):
     def __init__(self, path: Optional[str] = None) -> None:
         if path is not None:
             if not os.path.isfile(path):
-                raise IOError("Configuration file not found in " + path)
+                raise IOError(f"Configuration file not found in {path}")
             self.SEARCH_PATHS = self.SEARCH_PATHS + [path]
 
         self.config = configparser.ConfigParser()

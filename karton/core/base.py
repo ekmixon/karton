@@ -121,9 +121,11 @@ class KartonServiceBase(KartonBase):
     @classmethod
     def args_description(cls) -> str:
         """Return short description for argument parser."""
-        if not cls.__doc__:
-            return ""
-        return textwrap.dedent(cls.__doc__).strip().splitlines()[0]
+        return (
+            textwrap.dedent(cls.__doc__).strip().splitlines()[0]
+            if cls.__doc__
+            else ""
+        )
 
     @classmethod
     def args_parser(cls) -> argparse.ArgumentParser:

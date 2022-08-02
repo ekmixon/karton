@@ -72,12 +72,11 @@ def configuration_wizard(config_filename: str) -> None:
                 'Do you want to try with different MinIO settings ("yes", "no")?',
                 default="yes",
             )
-            if retry != "yes":
-                log.info("Quitting configuration")
-                return
-            else:
+            if retry == "yes":
                 continue
 
+            log.info("Quitting configuration")
+            return
         log.info("Connected to MinIO successfully")
         if not bucket_exists:
             log.info(
@@ -123,12 +122,11 @@ def configuration_wizard(config_filename: str) -> None:
                 'Do you want to try with different Redis settings ("yes", "no")?',
                 default="yes",
             )
-            if retry != "yes":
-                log.info("Quitting configuration")
-                return
-            else:
+            if retry == "yes":
                 continue
 
+            log.info("Quitting configuration")
+            return
         log.info("Connected to Redis successfully")
         break
 

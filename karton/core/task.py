@@ -66,16 +66,8 @@ class Task(object):
         if not isinstance(payload_persistent, dict):
             raise ValueError("Persistent payload should be an instance of a dict")
 
-        if uid is None:
-            self.uid = str(uuid.uuid4())
-        else:
-            self.uid = uid
-
-        if root_uid is None:
-            self.root_uid = self.uid
-        else:
-            self.root_uid = root_uid
-
+        self.uid = str(uuid.uuid4()) if uid is None else uid
+        self.root_uid = self.uid if root_uid is None else root_uid
         self.orig_uid = orig_uid
         self.parent_uid = parent_uid
 
@@ -99,7 +91,7 @@ class Task(object):
 
         :meta private:
         """
-        new_task = Task(
+        return Task(
             headers=self.headers,
             payload=self.payload,
             payload_persistent=self.payload_persistent,
@@ -108,7 +100,6 @@ class Task(object):
             root_uid=self.root_uid,
             orig_uid=self.uid,
         )
-        return new_task
 
     def derive_task(self, headers: Dict[str, Any]) -> "Task":
         """
@@ -145,12 +136,11 @@ class Task(object):
         :param headers: New headers for the task
         :return: Copy of task with new headers
         """
-        new_task = Task(
+        return Task(
             headers=headers,
             payload=self.payload,
             payload_persistent=self.payload_persistent,
         )
-        return new_task
 
     def matches_filters(self, filters: List[Dict[str, Any]]) -> bool:
         """

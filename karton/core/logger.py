@@ -42,8 +42,7 @@ class KartonLogHandler(logging.Handler):
             log_line["excValue"] = str(record.exc_info[1])
             log_line["excTraceback"] = traceback.format_exception(*record.exc_info)
 
-            exc_type = record.exc_info[0]
-            if exc_type:
+            if exc_type := record.exc_info[0]:
                 log_line["excType"] = exc_type.__name__
 
         log_line["type"] = "log"

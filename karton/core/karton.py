@@ -307,8 +307,7 @@ class Consumer(KartonServiceBase):
                     self.log.info("Binds changed, shutting down.")
                     break
 
-                task = self.backend.consume_routed_task(self.identity)
-                if task:
+                if task := self.backend.consume_routed_task(self.identity):
                     self.internal_process(task)
         except KeyboardInterrupt as e:
             self.log.info("Hard shutting down!")
@@ -394,11 +393,12 @@ class Karton(Consumer, Producer):
     ) -> None:
         super(Karton, self).__init__(config=config, identity=identity, backend=backend)
 
-        if self.config.config.has_section("signaling"):
-            if self.config.config.getboolean("signaling", "status", fallback=False):
-                self.log.info("Using status signaling")
-                self.add_pre_hook(self._send_signaling_status_task_begin, "task_begin")
-                self.add_post_hook(self._send_signaling_status_task_end, "task_end")
+        if self.config.config.has_section(
+            "signaling"
+        ) and self.config.config.getboolean("signaling", "status", fallback=False):
+            self.log.info("Using status signaling")
+            self.add_pre_hook(self._send_signaling_status_task_begin, "task_begin")
+            self.add_post_hook(self._send_signaling_status_task_end, "task_end")
 
     def _send_signaling_status_task_begin(self, task: Task) -> None:
         """Send a begin status signaling task.

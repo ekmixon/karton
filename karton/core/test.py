@@ -142,10 +142,10 @@ class KartonTestCase(unittest.TestCase):
         if resource._path is not None:
             with open(resource._path, "rb") as f:
                 while True:
-                    block = f.read(65536)
-                    if not block:
+                    if block := f.read(65536):
+                        h.update(block)
+                    else:
                         break
-                    h.update(block)
         else:
             h.update(cast(bytes, resource._content))
         return h.hexdigest()
@@ -161,12 +161,13 @@ class KartonTestCase(unittest.TestCase):
         """
         self.assertTrue(
             isinstance(resource, ResourceBase),
-            "Resource type mismatch in {}".format(resource_name),
+            f"Resource type mismatch in {resource_name}",
         )
+
         self.assertEqual(
             self.get_resource_sha256(resource),
             self.get_resource_sha256(expected),
-            "Resource content mismatch in {}".format(resource_name),
+            f"Resource content mismatch in {resource_name}",
         )
 
     def assertPayloadBagEqual(
@@ -181,17 +182,14 @@ class KartonTestCase(unittest.TestCase):
         self.assertSetEqual(
             set(payload.keys()),
             set(expected.keys()),
-            "Incorrect fields set in {}".format(payload_bag_name),
+            f"Incorrect fields set in {payload_bag_name}",
         )
+
         for key, value in payload.items():
             other_value = expected[key]
-            path = "{}.{}".format(payload_bag_name, key)
+            path = f"{payload_bag_name}.{key}"
             if not isinstance(value, ResourceBase):
-                self.assertEqual(
-                    value,
-                    other_value,
-                    "Incorrect value of {}".format(path),
-                )
+                self.assertEqual(value, other_value, f"Incorrect value of {path}")
             else:
                 self.assertResourceEqual(value, other_value, path)
 

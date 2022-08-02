@@ -218,9 +218,7 @@ class KartonBackend:
         :return: Task object
         """
         task_data = self.redis.get(f"{KARTON_TASK_NAMESPACE}:{task_uid}")
-        if not task_data:
-            return None
-        return Task.unserialize(task_data, backend=self)
+        return Task.unserialize(task_data, backend=self) if task_data else None
 
     def get_tasks(self, task_uid_list: List[str]) -> List[Task]:
         """
